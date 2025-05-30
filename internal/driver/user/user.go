@@ -66,8 +66,6 @@ func (u *userDriver) GetUserAge(ctx context.Context, name string) (int, error) {
 		return 0, err
 	}
 
-	fmt.Println(string(body))
-
 	if err := json.Unmarshal(body, &userAge); err != nil {
 		u.logger.Error(layer, method, "failed to unmarshal response", err, "body", string(body))
 		return 0, err
@@ -117,8 +115,6 @@ func (u *userDriver) GetUserNationality(ctx context.Context, name string) (strin
 		u.logger.Error(layer, method, "failed to read response body", err)
 		return "", err
 	}
-
-	fmt.Println(string(body))
 
 	if err := json.Unmarshal(body, &userNationality); err != nil {
 		u.logger.Error(layer, method, "failed to unmarshal response", err, "body", string(body))
@@ -173,8 +169,6 @@ func (u *userDriver) GetUserSex(ctx context.Context, name string) (domain.SexEnu
 		u.logger.Error(layer, method, "failed to read response body", err)
 		return "", err
 	}
-
-	fmt.Println(string(body))
 
 	if err := json.Unmarshal(body, &userGender); err != nil {
 		u.logger.Error(layer, method, "failed to unmarshal response", err, "body", string(body))
