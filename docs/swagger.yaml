@@ -1,0 +1,261 @@
+basePath: /v1
+definitions:
+  github_com_FlyKarlik_effectiveMobile_internal_delivery_http_response.BaseResponse-any:
+    properties:
+      code:
+        type: integer
+      data: {}
+      error: {}
+      status:
+        type: boolean
+    type: object
+  github_com_FlyKarlik_effectiveMobile_internal_domain.CreateUserInput:
+    properties:
+      name:
+        type: string
+      patronymic:
+        type: string
+      surname:
+        type: string
+    required:
+    - name
+    - surname
+    type: object
+  github_com_FlyKarlik_effectiveMobile_internal_domain.SexEnum:
+    enum:
+    - FEMALE
+    - MALE
+    type: string
+    x-enum-varnames:
+    - FemaleSexEnum
+    - MaleSexEnum
+  github_com_FlyKarlik_effectiveMobile_internal_domain.UpdateUserInput:
+    properties:
+      age:
+        type: integer
+      name:
+        type: string
+      nationality:
+        type: string
+      patronymic:
+        type: string
+      sex:
+        $ref: '#/definitions/github_com_FlyKarlik_effectiveMobile_internal_domain.SexEnum'
+      surname:
+        type: string
+    type: object
+  github_com_FlyKarlik_effectiveMobile_internal_domain.User:
+    properties:
+      age:
+        type: integer
+      created_at:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      nationality:
+        type: string
+      patronymic:
+        type: string
+      sex:
+        $ref: '#/definitions/github_com_FlyKarlik_effectiveMobile_internal_domain.SexEnum'
+      surname:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  github_com_FlyKarlik_effectiveMobile_pkg_generics.ItemsOutput-github_com_FlyKarlik_effectiveMobile_internal_domain_User:
+    properties:
+      error: {}
+      items:
+        items:
+          $ref: '#/definitions/github_com_FlyKarlik_effectiveMobile_internal_domain.User'
+        type: array
+      success:
+        type: boolean
+      total:
+        type: integer
+    type: object
+host: localhost:8000
+info:
+  contact:
+    email: nikitasavin191@gmail.com
+    name: API Support
+    url: https://github.com/FlyKarlik
+  description: API documentation for the Users backend service.
+  title: Users API
+  version: "1.0"
+paths:
+  /users:
+    get:
+      consumes:
+      - application/json
+      description: Возвращает список пользователей с пагинацией и фильтрацией
+      parameters:
+      - default: 10
+        description: Лимит записей (по умолчанию 10)
+        in: query
+        maximum: 100
+        minimum: 1
+        name: limit
+        type: integer
+      - default: 0
+        description: Смещение (по умолчанию 0)
+        in: query
+        minimum: 0
+        name: offset
+        type: integer
+      - description: Фильтр по имени (частичное совпадение)
+        in: query
+        name: name
+        type: string
+      - description: Фильтр по фамилии (частичное совпадение)
+        in: query
+        name: surname
+        type: string
+      - description: Фильтр по отчеству (частичное совпадение)
+        in: query
+        name: patronymic
+        type: string
+      - description: Фильтр по национальности (точное совпадение)
+        in: query
+        name: nationality
+        type: string
+      - description: Фильтр по полу
+        enum:
+        - MALE
+        - FEMALE
+        in: query
+        name: sex
+        type: string
+      - description: Фильтр по возрасту (точное совпадение)
+        in: query
+        maximum: 120
+        minimum: 1
+        name: age
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Успешный ответ
+          schema:
+            $ref: '#/definitions/github_com_FlyKarlik_effectiveMobile_pkg_generics.ItemsOutput-github_com_FlyKarlik_effectiveMobile_internal_domain_User'
+        "400":
+          description: Невалидные параметры запроса
+          schema:
+            $ref: '#/definitions/github_com_FlyKarlik_effectiveMobile_internal_delivery_http_response.BaseResponse-any'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/github_com_FlyKarlik_effectiveMobile_internal_delivery_http_response.BaseResponse-any'
+      summary: Поиск пользователей
+      tags:
+      - Пользователи
+    post:
+      consumes:
+      - application/json
+      description: Создает нового пользователя с указанными данными
+      parameters:
+      - description: Данные для создания пользователя
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_FlyKarlik_effectiveMobile_internal_domain.CreateUserInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Успешное создание пользователя
+          schema:
+            $ref: '#/definitions/github_com_FlyKarlik_effectiveMobile_internal_delivery_http_response.BaseResponse-any'
+        "400":
+          description: Невалидные данные запроса
+          schema:
+            $ref: '#/definitions/github_com_FlyKarlik_effectiveMobile_internal_delivery_http_response.BaseResponse-any'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/github_com_FlyKarlik_effectiveMobile_internal_delivery_http_response.BaseResponse-any'
+      summary: Создание пользователя
+      tags:
+      - Пользователи
+  /users/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Удаляет пользователя по его идентификатору
+      parameters:
+      - description: UUID пользователя
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Успешное удаление
+          schema:
+            $ref: '#/definitions/github_com_FlyKarlik_effectiveMobile_internal_delivery_http_response.BaseResponse-any'
+        "400":
+          description: Невалидные параметры запроса
+          schema:
+            $ref: '#/definitions/github_com_FlyKarlik_effectiveMobile_internal_delivery_http_response.BaseResponse-any'
+        "404":
+          description: Пользователь не найден
+          schema:
+            $ref: '#/definitions/github_com_FlyKarlik_effectiveMobile_internal_delivery_http_response.BaseResponse-any'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/github_com_FlyKarlik_effectiveMobile_internal_delivery_http_response.BaseResponse-any'
+      summary: Удаление пользователя
+      tags:
+      - Пользователи
+    patch:
+      consumes:
+      - application/json
+      description: Обновляет данные пользователя по его идентификатору
+      parameters:
+      - description: UUID пользователя
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Данные для обновления
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_FlyKarlik_effectiveMobile_internal_domain.UpdateUserInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Успешное обновление
+          schema:
+            $ref: '#/definitions/github_com_FlyKarlik_effectiveMobile_internal_delivery_http_response.BaseResponse-any'
+        "400":
+          description: Невалидные параметры запроса
+          schema:
+            $ref: '#/definitions/github_com_FlyKarlik_effectiveMobile_internal_delivery_http_response.BaseResponse-any'
+        "404":
+          description: Пользователь не найден
+          schema:
+            $ref: '#/definitions/github_com_FlyKarlik_effectiveMobile_internal_delivery_http_response.BaseResponse-any'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/github_com_FlyKarlik_effectiveMobile_internal_delivery_http_response.BaseResponse-any'
+      summary: Обновление пользователя
+      tags:
+      - Пользователи
+securityDefinitions:
+  BearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

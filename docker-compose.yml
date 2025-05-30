@@ -1,0 +1,50 @@
+version: "3.8"
+
+services:
+  users:
+    env_file:
+      - ./.env
+    container_name: users
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    entrypoint: ["/users-service"]
+    restart: unless-stopped
+    depends_on:
+      - postgres
+    networks:
+      - users-network
+
+  postgres:
+    container_name: postgres
+    image: postgres:16
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: 123456
+      POSTGRES_DB: users
+    restart: unless-stopped
+    volumes:
+      - ./pgdata:/var/lib/postgresql/dataV2
+    networks:
+      - users-network
+
+  migrator:
+    env_file:
+      - ./.env
+    container_name: migrator
+    build:
+      context: .
+      dockerfile: Dockerfile
+    entrypoint: ["/migrator-service","up"]
+    restart: on-failure
+    depends_on:
+      - postgres
+    networks:
+      - users-network
+
+networks:
+  users-network: {}
